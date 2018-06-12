@@ -1,0 +1,5 @@
+*.zip
+data/
+data_generated/
+mac_sim.app
+.DS_Store
