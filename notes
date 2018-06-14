@@ -1,0 +1,5 @@
+First apporach was to make a pipeline
+Trained a linear regression model, with all pixels flattened connected to single output
+
+
+
