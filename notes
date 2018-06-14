@@ -1,5 +1,30 @@
+--------- APPROACH -1 (BARE-BONES) -------
+
 First apporach was to make a pipeline
 Trained a linear regression model, with all pixels flattened connected to single output
 
+RESULTS:
+1. Bare bones network flattened --> single output neuron (Regression)
+
+TRAINING LOSS  : 322129.4235
+VALIDATION LOSS: 691929.9062
+
+something wrong here.
+
+Explore
+1. Is sample data really suppose to make sense?
+2. Bare bones network in correct
+3. Data preprocessing
 
 
+---------- COLLECT MORE DATA -----------
+
+Checkpoints
+
+NOTE: Controlling steering via mouse track, will give fine grained data.
+
+1. Driving straight
+2  Trying to remain straight - recover from sided to centre video recording
+3. Drive in opposite direction
+4. Drive on track 
+5. 
