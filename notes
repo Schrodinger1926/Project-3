@@ -9,12 +9,50 @@ RESULTS:
 TRAINING LOSS  : 322129.4235
 VALIDATION LOSS: 691929.9062
 
+Car keeps circling clockwise. Not a good model, not even close.
 something wrong here.
 
 Explore
 1. Is sample data really suppose to make sense?
+   check video for sample data, use video.py for that
+   ---
+   Video is same actually, lot of laps.
+
 2. Bare bones network in correct
+   Review
+   ---
+   It is correct
+
 3. Data preprocessing
+   a). Add left and right cam images
+       Simply append them in generator
+       ---
+       TRAINING LOSS: around the same
+       VALIDATION LOSS: around the same
+       
+
+   b). Add normalizaition
+       Use Lambda layer for this 
+       ---  
+       TRAINING LOSS  : 9.82
+       VALIDATION LOSS: 6.23
+        
+       Although I'm not sure how training loss is higher than that of validation loss
+       Must be huge underfitting.
+  
+   c). Add image flips to traning data
+       using opencv fip
+       ---
+       
+
+   c). Add perpective steering angle.
+       add rotation off set to left and right images
+       ---
+       Much better! 
+       TRAINING LOSS : 4-5
+       VALIDATION LOSS : 4-5
+       
+   d). Explore if continuous prespective steerting angle is possible.
 
 
 ---------- COLLECT MORE DATA -----------

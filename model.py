@@ -8,9 +8,10 @@ import sklearn
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense
+from keras.layers import Flatten, Dense, Lambda
 
 DATA_DIR = 'data'
+IMG_DIR = os.path.join(DATA_DIR, 'IMG')
 
 samples = []
 with open(os.path.join(DATA_DIR, 'driving_log.csv')) as csvfile:
@@ -24,6 +25,40 @@ train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 print("Traning samples : {} | Validation samples : {}"\
       .format(len(train_samples), len(validation_samples)))
 
+def fetch_view_angle(batch_sample, viewpoints):
+    res_images, res_angles = [], []
+    # fetch center angle
+    center_angle = float(batch_sample[3])
+    for idx, view in enumerate(viewpoints):
+        filename = os.path.join(IMG_DIR, batch_sample[idx].split('/')[-1])
+        image = cv2.imread(filename)
+        # Store original image
+        res_images.append(image)
+        # store fliped image
+        res_images.append(cv2.flip(image, 1))
+        offset = 0.2
+
+        if view == 'center':
+            # Store angles
+            res_angles.append(center_angle)
+            # Store flip angle
+            res_angles.append(-center_angle)
+
+        if view == 'left':
+            # Store angle
+            res_angles.append(center_angle + offset)
+            # Store flip angle
+            res_angles.append(-(center_angle + offset))
+
+        if view == 'right':
+            # Store angle
+            res_angles.append(center_angle - offset)
+            # Store fliped angle
+            res_angles.append(-(center_angle - offset))
+
+    return res_images, res_angles
+
+
 def generator(samples, batch_size=32):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
@@ -34,11 +69,17 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             for batch_sample in batch_samples:
+                """
                 name = 'data/IMG/'+batch_sample[0].split('/')[-1]
                 center_image = cv2.imread(name)
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
+                """
+                _images, _angles = fetch_view_angle(batch_sample = batch_sample,
+                                                viewpoints = ['center', 'left', 'right'])
+                images.extend(_images)
+                angles.extend(_angles)
 
             # trim image to only see section with road
             X_train = np.array(images)
@@ -51,20 +92,39 @@ def sanity_check_model():
     model = Sequential()
     # Preprocess incoming data, centered around zero with small standard deviation 
     model.add(Flatten(input_shape = (160, 320, 3)))
-    #model.add(Lambda(lambda x: x/127.5 - 1.)
+    # Normalization
+    model.add(Lambda(lambda x: (x - 127)/127))
+    # Fully connected layer 
     model.add(Dense(1))
     # Comple model
     model.compile(loss='mse', optimizer='adam')
 
     return model
 
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+def Lenet():
+    # Initialize model
+    model = Sequential()
+    # Normalize data
+    model.add(Lambda(lambda x: (x - 127)/127), input_shape = ())
+    
+
+
+def get_model(name = 'sanity_check'):
+    if name == 'sanity_check':
+        return sanity_check_model()
+    
+    if name ==  'LeNet':
+        return LeNet()
+
+
+batch_size = 32
+train_generator = generator(train_samples, batch_size = batch_size)
+validation_generator = generator(validation_samples, batch_size = batch_size)
 ch, row, col = 3, 160, 320  # Trimmed image format
 
 model = sanity_check_model()
-model.fit_generator(train_generator, samples_per_epoch= \
-            len(train_samples), validation_data=validation_generator, \
-            nb_val_samples=len(validation_samples), nb_epoch=3)
+model.fit_generator(train_generator, steps_per_epoch= \
+            2*3*len(train_samples)//batch_size, validation_data=validation_generator, \
+            validation_steps=len(validation_samples)//batch_size, epochs=10)
 
 model.save('model.h5')
