@@ -1,3 +1,4 @@
+import sys
 import os
 import csv
 from random import shuffle
@@ -37,7 +38,7 @@ def fetch_view_angle(batch_sample, viewpoints):
         res_images.append(image)
         # store fliped image
         res_images.append(cv2.flip(image, 1))
-        offset = 0.2
+        offset = 0.1
 
         if view == 'center':
             # Store angles
@@ -176,10 +177,11 @@ batch_size = 64
 train_generator = generator(train_samples, batch_size = batch_size)
 validation_generator = generator(validation_samples, batch_size = batch_size)
 
-model_name = 'nvidia'
+model_name = sys.argv[1]
+print(model_name)
 model = get_model(name = model_name)
 model.fit_generator(train_generator, steps_per_epoch= \
             2*3*len(train_samples)//batch_size, validation_data=validation_generator, \
-            validation_steps=len(validation_samples)//batch_size, epochs=3)
+            validation_steps=len(validation_samples)//batch_size, epochs=5)
 
 model.save('model_{}.h5'.format(model_name))

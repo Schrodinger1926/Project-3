@@ -54,6 +54,7 @@ Explore
    c). Add perpective steering angle.
        add rotation off set to left and right images
        ---
+       offset = 0.2
        Much better! 
        TRAINING LOSS : 4-5
        VALIDATION LOSS : 4-5
@@ -92,4 +93,14 @@ TRAINING LOSS  : 0.0131
 VALIDATION LOSS: 0.0183
 
 
+
+------- APPROACH nvidia net ----
+First apporach was to make a pipeline
+Trained a linear regression model, with all pixels flattened connected to single output
+
+RESULTS:
+1. nvidia (Regression)
+
+TRAINING LOSS  : 0.0158
+VALIDATION LOSS: 0.0140
 
