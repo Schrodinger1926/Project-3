@@ -21,6 +21,9 @@ with open(os.path.join(DATA_DIR, 'driving_log.csv')) as csvfile:
 
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 
+print("Traning samples : {} | Validation samples : {}"\
+      .format(len(train_samples), len(validation_samples)))
+
 def generator(samples, batch_size=32):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
@@ -42,18 +45,24 @@ def generator(samples, batch_size=32):
             y_train = np.array(angles)
             yield sklearn.utils.shuffle(X_train, y_train)
 
+
+def sanity_check_model():
+    # Initialize model
+    model = Sequential()
+    # Preprocess incoming data, centered around zero with small standard deviation 
+    model.add(Flatten(input_shape = (160, 320, 3)))
+    #model.add(Lambda(lambda x: x/127.5 - 1.)
+    model.add(Dense(1))
+    # Comple model
+    model.compile(loss='mse', optimizer='adam')
+
+    return model
+
 train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
 ch, row, col = 3, 160, 320  # Trimmed image format
 
-# Initialize model
-model = Sequential()
-# Preprocess incoming data, centered around zero with small standard deviation 
-model.add(Flatten(input_shape = (160, 320, 3)))
-#model.add(Lambda(lambda x: x/127.5 - 1.)
-model.add(Dense(1))
-
-model.compile(loss='mse', optimizer='adam')
+model = sanity_check_model()
 model.fit_generator(train_generator, samples_per_epoch= \
             len(train_samples), validation_data=validation_generator, \
             nb_val_samples=len(validation_samples), nb_epoch=3)
