@@ -120,7 +120,6 @@ def LeNet():
     model.add(Dropout(0.5))
 
     model.add(Dense(1))
-    model.add(Dropout(0.5))
 
     model.compile(loss='mse', optimizer='adam')
 
