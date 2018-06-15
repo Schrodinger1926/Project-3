@@ -53,8 +53,10 @@ Explore
        VALIDATION LOSS : 4-5
        
    d). Crop car hood
-       simply slice image
+       simply slice image (Will add overhead of editing drive.py for cropping imgaes)
+       Better, add cropping layer in keras model
        ---
+       check result on AWS
 
    d). Explore if continuous prespective steerting angle is possible.
 

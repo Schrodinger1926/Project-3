@@ -8,7 +8,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Conv2D, MaxPooling2D, Dropout
+from keras.layers import Flatten, Dense, Lambda, Conv2D, MaxPooling2D, Dropout, Cropping2D
 
 DATA_DIR = 'data'
 IMG_DIR = os.path.join(DATA_DIR, 'IMG')
@@ -24,6 +24,7 @@ train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 
 print("Traning samples : {} | Validation samples : {}"\
       .format(len(train_samples), len(validation_samples)))
+
 
 def fetch_view_angle(batch_sample, viewpoints):
     res_images, res_angles = [], []
@@ -104,6 +105,8 @@ def sanity_check_model():
 def LeNet():
     model = Sequential()
     model.add(Lambda(lambda x: (x - 127)/127, input_shape = (160, 320, 3)))
+    model.add(Cropping2D(cropping = ((70, 25), (0, 0))))
+
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
@@ -128,7 +131,7 @@ def LeNet():
 def get_model(name = 'sanity_check'):
     if name == 'sanity_check':
         return sanity_check_model()
-    
+
     if name ==  'LeNet':
         return LeNet()
 
@@ -138,7 +141,7 @@ train_generator = generator(train_samples, batch_size = batch_size)
 validation_generator = generator(validation_samples, batch_size = batch_size)
 ch, row, col = 3, 160, 320  # Trimmed image format
 
-model = get_model(name = 'LeNet')
+model = get_model(name = 'sanity_check')
 model.fit_generator(train_generator, steps_per_epoch= \
             2*3*len(train_samples)//batch_size, validation_data=validation_generator, \
             validation_steps=len(validation_samples)//batch_size, epochs=10)
