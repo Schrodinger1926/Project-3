@@ -43,7 +43,7 @@ Explore
    c). Add image flips to traning data
        using opencv fip
        ---
-       
+       Chek result on AWS
 
    c). Add perpective steering angle.
        add rotation off set to left and right images
@@ -52,6 +52,10 @@ Explore
        TRAINING LOSS : 4-5
        VALIDATION LOSS : 4-5
        
+   d). Crop car hood
+       simply slice image
+       ---
+
    d). Explore if continuous prespective steerting angle is possible.
 
 

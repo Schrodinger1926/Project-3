@@ -8,7 +8,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda
+from keras.layers import Flatten, Dense, Lambda, Conv2D, MaxPooling2D, Dropout
 
 DATA_DIR = 'data'
 IMG_DIR = os.path.join(DATA_DIR, 'IMG')
@@ -101,13 +101,30 @@ def sanity_check_model():
 
     return model
 
-def Lenet():
-    # Initialize model
+def LeNet():
     model = Sequential()
-    # Normalize data
-    model.add(Lambda(lambda x: (x - 127)/127), input_shape = ())
-    
+    model.add(Lambda(lambda x: (x - 127)/127, input_shape = (160, 320, 3)))
+    model.add(Conv2D(6, (5, 5), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
 
+    model.add(Conv2D(6, (5, 5), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Flatten())
+    model.add(Dense(120))
+    model.add(Dropout(0.5))
+
+    model.add(Dense(84))
+    model.add(Dropout(0.5))
+
+    model.add(Dense(1))
+    model.add(Dropout(0.5))
+
+    model.compile(loss='mse', optimizer='adam')
+
+    return model
 
 def get_model(name = 'sanity_check'):
     if name == 'sanity_check':
@@ -122,7 +139,7 @@ train_generator = generator(train_samples, batch_size = batch_size)
 validation_generator = generator(validation_samples, batch_size = batch_size)
 ch, row, col = 3, 160, 320  # Trimmed image format
 
-model = sanity_check_model()
+model = get_model(name = 'LeNet')
 model.fit_generator(train_generator, steps_per_epoch= \
             2*3*len(train_samples)//batch_size, validation_data=validation_generator, \
             validation_steps=len(validation_samples)//batch_size, epochs=10)
