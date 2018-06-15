@@ -104,23 +104,23 @@ def sanity_check_model():
 
 def LeNet():
     model = Sequential()
-    model.add(Lambda(lambda x: (x - 127)/127, input_shape = (160, 320, 3)))
+    model.add(Lambda(lambda x: (x - 127)/255, input_shape = (160, 320, 3)))
     model.add(Cropping2D(cropping = ((70, 25), (0, 0))))
 
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    #model.add(Dropout(0.25))
 
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    #model.add(Dropout(0.25))
 
     model.add(Flatten())
     model.add(Dense(120))
-    model.add(Dropout(0.5))
+    #model.add(Dropout(0.5))
 
     model.add(Dense(84))
-    model.add(Dropout(0.5))
+    #model.add(Dropout(0.5))
 
     model.add(Dense(1))
 
@@ -129,29 +129,24 @@ def LeNet():
     return model
 
 
-def LeNet():
+def nvidia():
     model = Sequential()
-    model.add(Lambda(lambda x: (x - 127)/127, input_shape = (160, 320, 3)))
+    model.add(Lambda(lambda x: (x - 127)/255, input_shape = (160, 320, 3)))
     model.add(Cropping2D(cropping = ((70, 25), (0, 0))))
 
-    model.add(Conv2D(24, (5, 5), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(24, (5, 5), strides = (2, 2), activation='relu'))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(36, (5, 5), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(36, (5, 5), strides = (2, 2), activation='relu'))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(48, (5, 5), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(48, (5, 5), strides = (2, 2), activation='relu'))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(64, (3, 3), strides = (1, 1), activation='relu'))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(64, (3, 3), strides = (1, 1), activation='relu'))
     model.add(Dropout(0.25))
 
     model.add(Flatten())
@@ -174,15 +169,17 @@ def get_model(name = 'sanity_check'):
     if name ==  'LeNet':
         return LeNet()
 
+    if name ==  'nvidia':
+        return nvidia()
 
-batch_size = 32
+batch_size = 64
 train_generator = generator(train_samples, batch_size = batch_size)
 validation_generator = generator(validation_samples, batch_size = batch_size)
-ch, row, col = 3, 160, 320  # Trimmed image format
 
-model = get_model(name = 'sanity_check')
+model_name = 'nvidia'
+model = get_model(name = model_name)
 model.fit_generator(train_generator, steps_per_epoch= \
             2*3*len(train_samples)//batch_size, validation_data=validation_generator, \
             validation_steps=len(validation_samples)//batch_size, epochs=3)
 
-model.save('model.h5')
+model.save('model_{}.h5'.format(model_name))
