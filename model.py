@@ -96,7 +96,7 @@ def sanity_check_model():
     model.add(Flatten(input_shape = (160, 320, 3)))
     # Normalization
     model.add(Lambda(lambda x: (x - 127)/127))
-    # Fully connected layer 
+    # Fully connected layer
     model.add(Dense(1))
     # Comple model
     model.compile(loss='mse', optimizer='adam')
@@ -110,18 +110,18 @@ def LeNet():
 
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    #model.add(Dropout(0.25))
+    model.add(Dropout(0.25))
 
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    #model.add(Dropout(0.25))
+    model.add(Dropout(0.25))
 
     model.add(Flatten())
     model.add(Dense(120))
-    #model.add(Dropout(0.5))
+    model.add(Dropout(0.5))
 
     model.add(Dense(84))
-    #model.add(Dropout(0.5))
+    model.add(Dropout(0.5))
 
     model.add(Dense(1))
 
@@ -182,6 +182,6 @@ print(model_name)
 model = get_model(name = model_name)
 model.fit_generator(train_generator, steps_per_epoch= \
             2*3*len(train_samples)//batch_size, validation_data=validation_generator, \
-            validation_steps=len(validation_samples)//batch_size, epochs=5)
+            validation_steps=len(validation_samples)//batch_size, epochs=10)
 
 model.save('model_{}.h5'.format(model_name))
