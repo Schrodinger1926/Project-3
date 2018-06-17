@@ -74,11 +74,10 @@ Checkpoints
 
 NOTE: Controlling steering via mouse track, will give fine grained data.
 
-1. Driving straight
-2  Trying to remain straight - recover from sided to centre video recording
-3. Drive in opposite direction
-4. Drive on track 
-5. 
+1. Driving straight [DONE]
+2  Trying to remain straight - recover from sided to centre video recording [DONE]
+3. Drive in opposite direction [DONE]
+4. Drive on track B
 
 
 
@@ -96,7 +95,8 @@ VALIDATION LOSS: 0.0183
 
 ------- APPROACH nvidia net ----
 First apporach was to make a pipeline
-Trained a linear regression model, with all pixels flattened connected to single output
+* Trained a linear regression model, with all pixels flattened connected to single output
+* Apply batch normalization, also helps with regularization stuff.
 
 RESULTS:
 1. nvidia (Regression)

@@ -9,7 +9,14 @@ import sklearn
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Conv2D, MaxPooling2D, Dropout, Cropping2D
+from keras.layers import Flatten,\
+                         Dense,\
+                         Lambda,\
+                         Conv2D,\
+                         MaxPooling2D,\
+                         Dropout, \
+                         Cropping2D,\
+                         BatchNormalization
 
 DATA_DIR = 'data'
 IMG_DIR = os.path.join(DATA_DIR, 'IMG')
@@ -137,18 +144,21 @@ def nvidia():
 
     model.add(Conv2D(24, (5, 5), strides = (2, 2), activation='relu'))
     #model.add(Dropout(0.25))
-
+    model.add(BatchNormalization(axis = 1))
     model.add(Conv2D(36, (5, 5), strides = (2, 2), activation='relu'))
     #model.add(Dropout(0.25))
 
     model.add(Conv2D(48, (5, 5), strides = (2, 2), activation='relu'))
     #model.add(Dropout(0.25))
+    model.add(BatchNormalization(axis = 1))
 
     model.add(Conv2D(64, (3, 3), strides = (1, 1), activation='relu'))
     #model.add(Dropout(0.25))
+    model.add(BatchNormalization(axis = 1))
 
     model.add(Conv2D(64, (3, 3), strides = (1, 1), activation='relu'))
     #model.add(Dropout(0.25))
+    model.add(BatchNormalization(axis = 1))
 
     model.add(Flatten())
     model.add(Dense(100))
