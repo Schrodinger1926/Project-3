@@ -104,3 +104,11 @@ RESULTS:
 TRAINING LOSS  : 0.0158
 VALIDATION LOSS: 0.0140
 
+
+2. After adding one more layer + data augmentation
+
+This was after 5 epochs, Basically loss is kind of decresing.
+TRAINING LOSS  : 0.0019
+VALIDATION LOSS: 0.0099
+
+Added dropout layers
