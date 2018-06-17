@@ -35,6 +35,22 @@ print("Traning samples : {} | Validation samples : {}"\
 
 
 def fetch_view_angle(batch_sample, viewpoints):
+    """
+    Conducts Preprocessing on a single data point.
+
+    Arguments
+    ---------
+    samples: numpy ndarray
+             4 dimensional numpy array of images
+
+    batch_size: int
+             Size of the data to be generated
+
+    Returns
+    ---------
+    4-D numpy ndarray
+
+    """
     res_images, res_angles = [], []
     # fetch center angle
     center_angle = float(batch_sample[3])
@@ -69,6 +85,22 @@ def fetch_view_angle(batch_sample, viewpoints):
 
 
 def generator(samples, batch_size=32):
+    """
+    Generates a batch of data on the fly
+
+    Arguments
+    ---------
+    samples: numpy ndarray
+             4 dimensional numpy array of images
+
+    batch_size: int
+             Size of the data to be generated
+
+    Returns
+    ---------
+    4-D numpy ndarray
+
+    """
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         shuffle(samples)
@@ -78,13 +110,6 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             for batch_sample in batch_samples:
-                """
-                name = 'data/IMG/'+batch_sample[0].split('/')[-1]
-                center_image = cv2.imread(name)
-                center_angle = float(batch_sample[3])
-                images.append(center_image)
-                angles.append(center_angle)
-                """
                 _images, _angles = fetch_view_angle(batch_sample = batch_sample,
                                                 viewpoints = ['center', 'left', 'right'])
                 images.extend(_images)
@@ -97,39 +122,76 @@ def generator(samples, batch_size=32):
 
 
 def sanity_check_model():
+    """
+    Bare Bones model with one no hidden layer i.e flattened input features
+    directly connected to output node.
+
+    This model is suppose to be used when building pipeline with minimum focus on model
+    performance.
+
+
+    Returns
+    ---------
+    keras model
+
+    """
     # Initialize model
     model = Sequential()
+
     # Preprocess incoming data, centered around zero with small standard deviation 
     model.add(Flatten(input_shape = (160, 320, 3)))
+
     # Normalization
     model.add(Lambda(lambda x: (x - 127)/127))
+
     # Fully connected layer
     model.add(Dense(1))
+
     # Comple model
     model.compile(loss='mse', optimizer='adam')
 
     return model
 
+
 def LeNet():
+    """
+    Conventional LeNet model.
+
+    This model is suppose to be used when building insight about the model performance.
+
+    Returns
+    ---------
+    keras model
+    """
+    # Initialize model
     model = Sequential()
+
+    # Preprocess incoming data, centered around zero with small standard deviation 
     model.add(Lambda(lambda x: (x - 127)/255, input_shape = (160, 320, 3)))
+
+    # Crop image, removing hood and beyond horizon
     model.add(Cropping2D(cropping = ((70, 25), (0, 0))))
 
+    # First: Convolutional layer
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
+    # Second: Convolutional layer
     model.add(Conv2D(6, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
+    # Third: Fully Connected layer
     model.add(Flatten())
     model.add(Dense(120))
     model.add(Dropout(0.5))
 
+    # Fourth: Fully Connected layer
     model.add(Dense(84))
     model.add(Dropout(0.5))
 
+    # Fourth: Output layer
     model.add(Dense(1))
 
     model.compile(loss='mse', optimizer='adam')
@@ -138,38 +200,64 @@ def LeNet():
 
 
 def nvidia():
+    """
+    Model architeture used by Nvidia for end-to-end human behaviour cloning.
+    
+    Reference: https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
+
+    This is an even powerfull network with 5 Convolutional layers and 3 Fully connected layers.
+
+    Returns
+    ---------
+    keras model
+    """
+    # Initialize model
     model = Sequential()
+
+    # Preprocess incoming data, centered around zero with small standard deviation 
     model.add(Lambda(lambda x: (x - 127)/255, input_shape = (160, 320, 3)))
+
+    # Crop image, removing hood and beyond horizon
     model.add(Cropping2D(cropping = ((70, 25), (0, 0))))
 
+    # First: Convolutional layer
     model.add(Conv2D(24, (5, 5), strides = (2, 2), activation='relu'))
     #model.add(Dropout(0.25))
     model.add(BatchNormalization(axis = 1))
+
+    # Second: Convolutional layer
     model.add(Conv2D(36, (5, 5), strides = (2, 2), activation='relu'))
     #model.add(Dropout(0.25))
 
+    # Third: Convolutional layer
     model.add(Conv2D(48, (5, 5), strides = (2, 2), activation='relu'))
     #model.add(Dropout(0.25))
     model.add(BatchNormalization(axis = 1))
 
+    # Fourth: Convolutional layer
     model.add(Conv2D(64, (3, 3), strides = (1, 1), activation='relu'))
     #model.add(Dropout(0.25))
     model.add(BatchNormalization(axis = 1))
 
+    # Fifth: Convolutional layer
     model.add(Conv2D(64, (3, 3), strides = (1, 1), activation='relu'))
     #model.add(Dropout(0.25))
     model.add(BatchNormalization(axis = 1))
 
     model.add(Flatten())
+    # Sixth: Fully Connected layer
     model.add(Dense(100))
     #model.add(Dropout(0.5))
 
+    # Seventh: Fully Connected layer
     model.add(Dense(50))
     #model.add(Dropout(0.5))
 
+    # Eigth: Fully Connected layer
     model.add(Dense(10))
     #model.add(Dropout(0.5))
 
+    # Ninth: Output layer
     model.add(Dense(1))
 
     model.compile(loss='mse', optimizer='adam')
@@ -177,6 +265,19 @@ def nvidia():
     return model
 
 def get_model(name = 'sanity_check'):
+    """
+    Return appropriate model
+
+    Arguments
+    ---------
+    name: string
+         Name of the model to be trained
+
+    Returns
+    ---------
+    Keras model
+    """
+
     if name == 'sanity_check':
         return sanity_check_model()
 
