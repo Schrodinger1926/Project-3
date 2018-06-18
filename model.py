@@ -314,6 +314,6 @@ plt.title('model mean squared error loss')
 plt.ylabel('mean squared error loss')
 plt.xlabel('epoch')
 plt.legend(['training set', 'validation set'], loc='upper right')
-plt.imsave('post_training_analysis.png')
+plt.savefig('post_training_analysis.png')
 
 model.save('model_{}.h5'.format(model_name))
