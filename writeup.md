@@ -131,6 +131,8 @@ Slowly I introduced following techniques into my model.
 
    c). Add perpective steering angle.
        add rotation off set to left and right images
+       This was meant to keep car in center position when deviated.
+
        ---
        offset = 0.1
        
@@ -156,6 +158,11 @@ Here is a visualization of the architecture (note: visualizing the architecture 
 
 ![alt text][image8]
 
+
+
+Also, the drive.py file loads image in RGB but our network was modeled to handle BGR colorspace.
+so, I changed drive.py so that it would convert RGB images to BGR before sending to network for steering angle prediction.
+
 #### 3. Creation of the Training Set & Training Process
 
 To capture good driving behavior, I first recorded three laps on track one using center lane driving. Here is an example image of center lane driving:
@@ -174,7 +181,8 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 ![alt text][image6]
 ![alt text][image7]
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+Traning Data: 75804
+Validation Data: 18951
 
 
 I finally randomly shuffled the data set and put 20% of the data into a validation set. 
