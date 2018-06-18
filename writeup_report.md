@@ -102,24 +102,27 @@ For that I Trained a linear regression model, with all pixels flattened connecte
 
  Bare bones network flattened --> single output neuron (Regression)
 
-TRAINING LOSS  : 322129.4235
+TRAINING LOSS  : 322129.4235 <br>
+
 VALIDATION LOSS: 691929.9062
 
-Car keeps circling clockwise. Not a good model, not even close.Phase-1 accomplished. 
+Car keeps circling clockwise. Not a good model, not even close.
 
-Slowly I introduced following techniques into my model.
+Phase-1 accomplished. 
 
-1. Is sample data really suppose to make sense?
+Slowly I introduced following checks and techniques into my model.
+
+#####  Is sample data really suppose to make sense?
    check video for sample data, use video.py for that
    ---
    Video is same actually, lot of laps.
 
-2. Bare bones network is correct
+##### Bare bones network is correct
    Review
    ---
    It is correct
 
-3. Data preprocessing and augmentation.
+##### Data preprocessing and augmentation.
    a). Add left and right cam images
        Simply append them in generator
        
