@@ -23,7 +23,7 @@ The goals / steps of this project are the following:
 [image5]: ./assets/phase-3.jpg "Recovery Image"
 [image6]: ./assets/unfliped.jpg "Normal Image"
 [image7]: ./assets/fliped.jpg  "Flipped Image"
-[image8]: ./assets/nvida_network.png  "Final Model Architecture"
+[image8]: ./assets/nvidia_network.png  "Final Model Architecture"
 [image9]: ./assets/post_training_analysis.png  "Post training analysis"
 [image10]: ./assets/center.jpg  "Center Lane Driving"
 
@@ -136,7 +136,7 @@ Slowly I introduced following checks and techniques into my model.
        add rotation off set to left and right images
        This was meant to keep car in center position when deviated.
 
-       ---
+
        offset = 0.1
        
    d). Crop car hood
@@ -184,7 +184,8 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 ![alt text][image6]
 ![alt text][image7]
 
-Traning Data: 75804
+Traning Data: 75804 <br>
+
 Validation Data: 18951
 
 
