@@ -23,7 +23,7 @@ The goals / steps of this project are the following:
 [image5]: ./assets/phase-3.jpg "Recovery Image"
 [image6]: ./assets/unfliped.jpg "Normal Image"
 [image7]: ./assets/fliped.jpg  "Flipped Image"
-[image8]: ./assets/nvida_nework.jpg  "Final Model Architecture"
+[image8]: ./assets/nvida_network.png  "Final Model Architecture"
 [image9]: ./assets/post_training_analysis.png  "Post training analysis"
 [image10]: ./assets/center.jpg  "Center Lane Driving"
 
