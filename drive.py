@@ -8,9 +8,11 @@ import numpy as np
 import socketio
 import eventlet
 import eventlet.wsgi
+import cv2
 from PIL import Image
 from flask import Flask
 from io import BytesIO
+
 
 from keras.models import load_model
 import h5py
@@ -61,8 +63,9 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        # convert RGB --> RGB
-        #image_array = Image.fromarray(np.roll(image_array, 1, axis=-1))
+        # convert RGB --> BGR
+        image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
+
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
         throttle = controller.update(float(speed))
